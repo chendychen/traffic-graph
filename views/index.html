@@ -1,23 +1,30 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" ng-app="graphApp">
 <head>
   <meta charset="utf-8">
   <script type="text/javascript" src='./public/dependencies/jquery-3.1.1.min.js'></script>
+  <script type="text/javascript" src='./public/dependencies/angular.js'></script>
   <script type="text/javascript" src='./public/dependencies/bootstrap/js/bootstrap.js'></script>
-  <link href="./public/dependencies/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <script type="text/javascript" src='./public/dependencies/d3.js'></script>
-  <script type="text/javascript" src='./public/javascripts/graph.js'></script>
+  <!-- <script type="text/javascript" src='./public/app/services/d3.js'></script> -->
+  <script type="text/javascript" src='./public/app/controllers/mainGraph.js'></script>
+  <link href="./public/dependencies/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <script type="text/javascript" src='./public/app/services/graph.js'></script> -->
   <link href="./public/stylesheets/index.css" rel="stylesheet">
 
   <title>Bicycle Traffic Monitor</title>
   <meta name="description" content="Bicycle Traffic Monitor">
 </head>
 
-<body>
+<body ng-controller="graphAppController">
   <div class="title">
     <h1>WEW LAD</h1>
   </div>
+  <input type="file" id="file" name="file" onchange="angular.element(this).scope().add()"/>
+  <button ng-click="add()">Add</button>
+  <br>
+  <d3-bars data="d3Data" label="name" ng-click="onClick()"></d3-bars>
   <div class='trafficGraph col-md-8'>
     ayy
   </div>
