@@ -1,3 +1,7 @@
+body {
+  margin-left: 2%;
+}
+
 .trafficGraph {
   padding-top: 10px;
   background-color: #f9f4e5;

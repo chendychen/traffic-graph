@@ -1,32 +1,38 @@
 <!doctype html>
 
 <html lang="en" ng-app="graphApp">
-<head>
-  <meta charset="utf-8">
-  <script type="text/javascript" src='./public/dependencies/jquery-3.1.1.min.js'></script>
-  <script type="text/javascript" src='./public/dependencies/angular.js'></script>
-  <script type="text/javascript" src='./public/dependencies/bootstrap/js/bootstrap.js'></script>
-  <script type="text/javascript" src='./public/dependencies/d3.js'></script>
-  <!-- <script type="text/javascript" src='./public/app/services/d3.js'></script> -->
-  <script type="text/javascript" src='./public/app/controllers/mainGraph.js'></script>
-  <link href="./public/dependencies/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <!-- <script type="text/javascript" src='./public/app/services/graph.js'></script> -->
-  <link href="./public/stylesheets/index.css" rel="stylesheet">
 
-  <title>Bicycle Traffic Monitor</title>
-  <meta name="description" content="Bicycle Traffic Monitor">
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src='./public/dependencies/jquery-3.1.1.min.js'></script>
+    <script type="text/javascript" src='./public/dependencies/angular.js'></script>
+    <script type="text/javascript" src='./public/dependencies/bootstrap/js/bootstrap.js'></script>
+    <script type="text/javascript" src='./public/dependencies/d3.js'></script>
+    <!-- <script type="text/javascript" src='./public/app/services/d3.js'></script> -->
+    <script type="text/javascript" src='./public/app/controllers/mainGraph.js'></script>
+    <link href="./public/dependencies/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <script type="text/javascript" src='./public/app/services/graph.js'></script> -->
+    <link href="./public/stylesheets/index.css" rel="stylesheet">
+
+    <title>Bicycle Traffic Monitor</title>
+    <meta name="description" content="Bicycle Traffic Monitor">
 </head>
 
 <body ng-controller="graphAppController">
-  <div class="title">
-    <h1>WEW LAD</h1>
-  </div>
-  <input type="file" id="file" name="file" onchange="angular.element(this).scope().add()"/>
-  <button ng-click="add()">Add</button>
-  <br>
-  <d3-bars data="d3Data" label="name" ng-click="onClick()"></d3-bars>
-  <div class='trafficGraph col-md-8'>
-    ayy
-  </div>
+    <div class="title">
+        <h1>Bicycle Traffic Monitor</h1>
+    </div>
+    <input type="file" id="file" name="file" onchange="angular.element(this).scope().add()" />
+    <br>
+    <button ng-click="onClick()">Start Livestream</button>
+    <br><br>
+    <div class=trafficGraph>
+        <span ng-cloak ng-show=done>Number of Bicycles that have passed through</span>
+        <br><br>
+        <d3-bars data="d3Data" label="name" ng-click="onClick()"></d3-bars>
+    </div>
+    <span ng-cloak ng-show=inProgress>In Progress</span>
+    <span ng-cloak ng-show=done>Time elapsed: {{totalTime}} seconds</span>
 </body>
+
 </html>
