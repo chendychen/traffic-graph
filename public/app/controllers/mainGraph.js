@@ -1,6 +1,6 @@
 var graphApp = angular.module('graphApp', ['ng']);
 
-graphApp.controller('graphAppController', function GraphAppController($scope) {
+graphApp.controller('graphAppController', function GraphAppController($scope, $interval, $http) {
     //Global variables
     $scope.d3Data = [];
     $scope.magX = [];
@@ -14,6 +14,15 @@ graphApp.controller('graphAppController', function GraphAppController($scope) {
     // Progress Variables
     $scope.inProgress = false;
     $scope.done = false;
+
+    // Flag for livestream
+    $scope.livestreamOn = false;
+
+    // Livestream Path
+    $scope.livestreamPath = "./public/data/livestream.csv";
+
+    // Error when there is no livestream file
+    $scope.livestreamFileExists = true;
 
     // Array with Times
     $scope.times = [];
@@ -44,7 +53,34 @@ graphApp.controller('graphAppController', function GraphAppController($scope) {
         r.readAsBinaryString(f);
     };
 
-    $scope.onClick = function(scope) {};
+    $scope.onClick = function() {
+      $scope.livestreamOn = !$scope.livestreamOn;
+      if($scope.livestreamOn)
+        $interval($scope.livestream, 5000);
+      else
+        $interval.cancel($scope.livestream);
+    };
+
+    $scope.livestream = function() {
+      $scope.livestreamFileExists = true;
+      if(!$scope.fileExists($scope.livestreamPath))
+          $scope.livestreamFileExists = false;
+      if($scope.livestreamOn) {
+        d3.text($scope.livestreamPath, function(unparsedData) {
+          console.log("eyy");
+          var data = unparsedData;
+          $scope.parseData(data);
+          $scope.$apply();
+        })
+      }
+    };
+
+    $scope.fileExists = function(url) {
+        var http = new XMLHttpRequest();
+        http.open('HEAD', url, false);
+        http.send();
+        return http.status != 404;
+    };
 
     $scope.parseData = function(unparsedData) {
         var data = d3.csvParseRows(unparsedData);
@@ -264,7 +300,7 @@ graphApp.directive('d3Bars', [function() {
 
             // define render function
             scope.render = function(data) {
-                console.log("data", data);
+                console.log("Rendered data", data);
                 var dataMax = 0;
                 data.forEach(function(element, index, array) {
                     if (element[0] > dataMax)
@@ -279,7 +315,6 @@ graphApp.directive('d3Bars', [function() {
                 height = scope.data.length * 50;
                 // 35 = 30(bar height) + 5(margin between bars)
                 max = (dataMax > 5) ? dataMax : 5;
-                console.log("Max", dataMax, max);
                 // this can also be found dynamically when the data is not static
                 // max = Math.max.apply(Math, _.map(data, ((val)-> val.count)))
 

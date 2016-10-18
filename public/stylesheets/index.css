@@ -2,6 +2,10 @@ body {
   margin-left: 2%;
 }
 
+.error {
+  color: red;
+}
+
 .trafficGraph {
   padding-top: 10px;
   background-color: #f9f4e5;

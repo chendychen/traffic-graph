@@ -25,11 +25,13 @@
     <input type="file" id="file" name="file" onchange="angular.element(this).scope().add()" />
     <br>
     <button ng-click="onClick()">Start Livestream</button>
+    <span class="error" ng-cloak ng-show="!livestreamFileExists">No livestream file found</span>
+    <span ng-cloak>{{livestreamOn}}</span>
     <br><br>
     <div class=trafficGraph>
         <span ng-cloak ng-show=done>Number of Bicycles that have passed through</span>
         <br><br>
-        <d3-bars data="d3Data" label="name" ng-click="onClick()"></d3-bars>
+        <d3-bars data="d3Data" label="name"></d3-bars>
     </div>
     <span ng-cloak ng-show=inProgress>In Progress</span>
     <span ng-cloak ng-show=done>Time elapsed: {{totalTime}} seconds</span>
