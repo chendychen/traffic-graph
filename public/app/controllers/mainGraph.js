@@ -27,6 +27,16 @@ graphApp.controller('graphAppController', function GraphAppController($scope, $i
     // Array with Times
     $scope.times = [];
 
+    // Modes
+    $scope.Xmode = 0;
+    $scope.Ymode = 0;
+    $scope.Zmode = 0;
+
+    // Deltas that determine thresholds
+    $scope.Xdelta = 0.2;
+    $scope.Ydelta = 0.2;
+    $scope.Zdelta = 0.2;
+
     // Peak Thresholds
     $scope.XpeakThreshold = 0.4;
     $scope.YpeakThreshold = 0.15;
@@ -54,25 +64,25 @@ graphApp.controller('graphAppController', function GraphAppController($scope, $i
     };
 
     $scope.onClick = function() {
-      $scope.livestreamOn = !$scope.livestreamOn;
-      if($scope.livestreamOn)
-        $interval($scope.livestream, 5000);
-      else
-        $interval.cancel($scope.livestream);
+        $scope.livestreamOn = !$scope.livestreamOn;
+        if ($scope.livestreamOn)
+            $interval($scope.livestream, 5000);
+        else
+            $interval.cancel($scope.livestream);
     };
 
     $scope.livestream = function() {
-      $scope.livestreamFileExists = true;
-      if(!$scope.fileExists($scope.livestreamPath))
-          $scope.livestreamFileExists = false;
-      if($scope.livestreamOn) {
-        d3.text($scope.livestreamPath, function(unparsedData) {
-          console.log("eyy");
-          var data = unparsedData;
-          $scope.parseData(data);
-          $scope.$apply();
-        })
-      }
+        $scope.livestreamFileExists = true;
+        if (!$scope.fileExists($scope.livestreamPath))
+            $scope.livestreamFileExists = false;
+        if ($scope.livestreamOn) {
+            d3.text($scope.livestreamPath, function(unparsedData) {
+                console.log("eyy");
+                var data = unparsedData;
+                $scope.parseData(data);
+                $scope.$apply();
+            })
+        }
     };
 
     $scope.fileExists = function(url) {
@@ -94,6 +104,51 @@ graphApp.controller('graphAppController', function GraphAppController($scope, $i
         $scope.done = true;
     };
 
+    $scope.getMode = function(data, dimensionNumber) {
+        // Find the mode of mag data
+        var magArray = [];
+        for (i = 1; i < data.length; i++) {
+            var round = $scope.round(data[i][dimensionNumber], 1);
+            magArray.push(round);
+        }
+
+        var frequency = {};
+        var max = 0;
+        var result;
+
+        for (var v in magArray) {
+            frequency[magArray[v]] = (frequency[magArray[v]] || 0) + 1;
+            if (frequency[magArray[v]] > max) {
+                max = frequency[magArray[v]];
+                result = magArray[v];
+            };
+        };
+
+        console.log('Mode', result);
+
+        switch (dimensionNumber) {
+            case 1:
+                console.log("Changing X");
+                $scope.XpeakThreshold = result + $scope.Xdelta;
+                $scope.XtroughThreshold = result - $scope.Xdelta;
+                break;
+            case 2:
+                console.log("Changing Y");
+                $scope.YpeakThreshold = result + $scope.Ydelta;
+                $scope.YtroughThreshold = result - $scope.Ydelta;
+                break;
+            case 3:
+                console.log("Changing Z");
+                $scope.ZpeakThreshold = result + $scope.Zdelta;
+                $scope.ZtroughThreshold = result - $scope.Zdelta;
+                break;
+        }
+    };
+
+    $scope.round = function(value, decimals) {
+        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    };
+
     $scope.parseMagData = function(data, dimension) {
         var dimensionNumber = 0;
         switch (dimension) {
@@ -112,6 +167,11 @@ graphApp.controller('graphAppController', function GraphAppController($scope, $i
         };
         var peaks = [];
         var troughs = [];
+
+        $scope.getMode(data, dimensionNumber);
+        console.log("X thresholds", $scope.XpeakThreshold, $scope.XtroughThreshold);
+        console.log("Y thresholds", $scope.YpeakThreshold, $scope.YtroughThreshold);
+        console.log("Z thresholds", $scope.ZpeakThreshold, $scope.ZtroughThreshold);
 
         // Find the peaks in magnetic activity from the data
         // Only registers peaks that are above a predetermined threshold
